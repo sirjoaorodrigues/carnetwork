@@ -1,0 +1,352 @@
+<!-- cars/templates/cars/registro.html -->
+
+{% extends 'cars/base.html' %}
+
+{% block title %}Criar Conta{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <!-- Logo/Header -->
+            <div class="text-center mb-4">
+                <i class="bi bi-car-front display-1 text-primary"></i>
+                <h2 class="mt-2">Bem-vindo ao CarSocial</h2>
+                <p class="text-muted">Crie sua conta e compartilhe sua paixão por carros!</p>
+            </div>
+
+            <!-- Card de Registro -->
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h4 class="card-title text-center mb-4">Criar Nova Conta</h4>
+                    
+                    <!-- Alertas de Erro -->
+                    {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Ops!</strong> Por favor, corrija os erros abaixo:
+                            <ul class="mb-0 mt-2">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+
+                    <!-- Formulário -->
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Campo Username -->
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">
+                                <i class="bi bi-person"></i> Nome de Usuário
+                            </label>
+                            <input type="text" 
+                                   class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                                   id="{{ form.username.id_for_label }}"
+                                   name="{{ form.username.name }}"
+                                   value="{{ form.username.value|default:'' }}"
+                                   placeholder="Escolha um nome de usuário"
+                                   required>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                150 caracteres ou menos. Apenas letras, números e @/./+/-/_ 
+                            </small>
+                        </div>
+
+                        <!-- Campo Email (Opcional) -->
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">
+                                <i class="bi bi-envelope"></i> Email (opcional)
+                            </label>
+                            <input type="email" 
+                                   class="form-control"
+                                   id="id_email"
+                                   name="email"
+                                   placeholder="seu@email.com">
+                            <small class="form-text text-muted">
+                                Usado para recuperação de senha
+                            </small>
+                        </div>
+
+                        <!-- Campo Senha -->
+                        <div class="mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label">
+                                <i class="bi bi-lock"></i> Senha
+                            </label>
+                            <div class="input-group">
+                                <input type="password" 
+                                       class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                                       id="{{ form.password1.id_for_label }}"
+                                       name="{{ form.password1.name }}"
+                                       placeholder="Digite uma senha forte"
+                                       required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                {% if form.password1.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.password1.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <small class="form-text text-muted">
+                                Mínimo 8 caracteres. Não pode ser muito similar ao nome de usuário.
+                            </small>
+                        </div>
+
+                        <!-- Campo Confirmar Senha -->
+                        <div class="mb-4">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label">
+                                <i class="bi bi-lock-fill"></i> Confirmar Senha
+                            </label>
+                            <div class="input-group">
+                                <input type="password" 
+                                       class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                                       id="{{ form.password2.id_for_label }}"
+                                       name="{{ form.password2.name }}"
+                                       placeholder="Digite a senha novamente"
+                                       required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                {% if form.password2.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.password2.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Termos de Uso -->
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="termos" required>
+                            <label class="form-check-label" for="termos">
+                                Concordo com os <a href="#" data-bs-toggle="modal" data-bs-target="#termosModal">termos de uso</a> e <a href="#" data-bs-toggle="modal" data-bs-target="#privacidadeModal">política de privacidade</a>
+                            </label>
+                        </div>
+
+                        <!-- Botão Submit -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-person-plus"></i> Criar Conta
+                            </button>
+                        </div>
+
+                        <!-- Divisor -->
+                        <hr class="my-4">
+
+                        <!-- Link para Login -->
+                        <p class="text-center mb-0">
+                            Já tem uma conta? 
+                            <a href="{% url 'login' %}" class="text-decoration-none">
+                                Faça login
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Benefícios -->
+            <div class="mt-4">
+                <h5 class="text-center mb-3">Por que criar uma conta?</h5>
+                <div class="row g-3 text-center">
+                    <div class="col-4">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-block mb-2">
+                            <i class="bi bi-car-front fs-4 text-primary"></i>
+                        </div>
+                        <p class="small mb-0">Compartilhe seus carros</p>
+                    </div>
+                    <div class="col-4">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-block mb-2">
+                            <i class="bi bi-people fs-4 text-primary"></i>
+                        </div>
+                        <p class="small mb-0">Conecte com entusiastas</p>
+                    </div>
+                    <div class="col-4">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-block mb-2">
+                            <i class="bi bi-calendar-event fs-4 text-primary"></i>
+                        </div>
+                        <p class="small mb-0">Participe de eventos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Termos de Uso -->
+<div class="modal fade" id="termosModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Termos de Uso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Aceitação dos Termos</h6>
+                <p>Ao criar uma conta no CarSocial, você concorda com estes termos de uso...</p>
+                
+                <h6>2. Uso da Plataforma</h6>
+                <p>O CarSocial é uma rede social para entusiastas de carros...</p>
+                
+                <h6>3. Conteúdo do Usuário</h6>
+                <p>Você é responsável por todo conteúdo que publicar...</p>
+                
+                <h6>4. Privacidade</h6>
+                <p>Respeitamos sua privacidade. Veja nossa política de privacidade...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Política de Privacidade -->
+<div class="modal fade" id="privacidadeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Política de Privacidade</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Informações que Coletamos</h6>
+                <p>Coletamos informações que você fornece diretamente...</p>
+                
+                <h6>2. Como Usamos suas Informações</h6>
+                <p>Usamos as informações coletadas para...</p>
+                
+                <h6>3. Compartilhamento de Dados</h6>
+                <p>Não vendemos seus dados pessoais...</p>
+                
+                <h6>4. Segurança</h6>
+                <p>Implementamos medidas de segurança para proteger seus dados...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para mostrar/ocultar senha -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle password visibility
+    const togglePassword1 = document.getElementById('togglePassword1');
+    const togglePassword2 = document.getElementById('togglePassword2');
+    const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+    const password2 = document.getElementById('{{ form.password2.id_for_label }}');
+    
+    togglePassword1.addEventListener('click', function() {
+        const type = password1.getAttribute('type') === 'password' ? 'text' : 'password';
+        password1.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye');
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+    
+    togglePassword2.addEventListener('click', function() {
+        const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+        password2.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('bi-eye');
+        this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+    
+    // Validação em tempo real
+    const form = document.querySelector('form');
+    const username = document.getElementById('{{ form.username.id_for_label }}');
+    const email = document.getElementById('id_email');
+    
+    // Validar username
+    username.addEventListener('blur', function() {
+        if (this.value.length < 3) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        }
+    });
+    
+    // Validar email se preenchido
+    email.addEventListener('blur', function() {
+        if (this.value && !this.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else if (this.value) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        }
+    });
+    
+    // Validar senhas
+    password2.addEventListener('blur', function() {
+        if (password1.value !== password2.value) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else if (this.value) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        }
+    });
+});
+</script>
+
+<style>
+/* Estilos customizados */
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control.is-valid:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+/* Animação suave */
+.alert {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}

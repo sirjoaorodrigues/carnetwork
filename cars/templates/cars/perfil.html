@@ -1,0 +1,84 @@
+<!-- cars/templates/cars/perfil.html -->
+
+{% extends 'cars/base.html' %}
+
+{% block title %}{{ usuario.username }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-person-circle" style="font-size: 5rem;"></i>
+                <h3>{{ usuario.username }}</h3>
+                
+                {% if usuario.profile.bio %}
+                <p class="text-muted">{{ usuario.profile.bio }}</p>
+                {% endif %}
+                
+                <div class="d-flex justify-content-around my-3">
+                    <div>
+                        <strong>{{ usuario.posts.count }}</strong><br>
+                        <small>Posts</small>
+                    </div>
+                    <div>
+                        <strong>{{ usuario.carros.count }}</strong><br>
+                        <small>Carros</small>
+                    </div>
+                    <div>
+                        <strong>{{ usuario.seguidores.count }}</strong><br>
+                        <small>Seguidores</small>
+                    </div>
+                </div>
+                
+                {% if usuario != request.user %}
+                    {% if esta_seguindo %}
+                    <a href="{% url 'deixar_de_seguir' usuario.username %}" class="btn btn-outline-primary">
+                        Deixar de seguir
+                    </a>
+                    {% else %}
+                    <a href="{% url 'seguir_usuario' usuario.username %}" class="btn btn-primary">
+                        Seguir
+                    </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Carros do usuário -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Meus Carros</h5>
+            </div>
+            <div class="card-body">
+                {% for carro in carros %}
+                <div class="mb-3">
+                    <img src="{{ carro.foto_principal.url }}" class="img-fluid rounded" alt="{{ carro }}">
+                    <h6 class="mt-2">{{ carro }}</h6>
+                    <small class="text-muted">{{ carro.cor }}</small>
+                </div>
+                {% empty %}
+                <p class="text-muted">Nenhum carro cadastrado ainda.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h4>Posts</h4>
+        {% for post in posts %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <p>{{ post.conteudo }}</p>
+                {% if post.imagem %}
+                <img src="{{ post.imagem.url }}" class="img-fluid rounded" alt="Post">
+                {% endif %}
+                <small class="text-muted">{{ post.criado_em|date:"d/m/Y H:i" }}</small>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Nenhum post ainda.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

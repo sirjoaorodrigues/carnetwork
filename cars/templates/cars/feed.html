@@ -1,0 +1,85 @@
+<!-- cars/templates/cars/feed.html -->
+
+{% extends 'cars/base.html' %}
+
+{% block title %}Feed{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <!-- Formulário de novo post -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Compartilhar</h5>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send"></i> Publicar
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Posts -->
+        {% for post in posts %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-person-circle fs-3 me-2"></i>
+                    <div>
+                        <h6 class="mb-0">
+                            <a href="{% url 'perfil' post.autor.username %}" class="text-decoration-none">
+                                {{ post.autor.username }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">{{ post.criado_em|date:"d/m/Y H:i" }}</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <p class="card-text">{{ post.conteudo }}</p>
+                
+                {% if post.carro %}
+                <div class="border rounded p-2 mb-2">
+                    <small class="text-muted">
+                        <i class="bi bi-car-front"></i> 
+                        {{ post.carro }}
+                    </small>
+                </div>
+                {% endif %}
+                
+                {% if post.imagem %}
+                <img src="{{ post.imagem.url }}" class="img-fluid rounded" alt="Post image">
+                {% endif %}
+            </div>
+            
+            <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="{% url 'curtir_post' post.id %}" class="btn btn-sm btn-outline-danger">
+                            {% if user in post.curtidas.all %}
+                                <i class="bi bi-heart-fill"></i>
+                            {% else %}
+                                <i class="bi bi-heart"></i>
+                            {% endif %}
+                            {{ post.total_curtidas }}
+                        </a>
+                        <button class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-chat"></i> 
+                            {{ post.comentarios.count }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Nenhum post para mostrar. 
+            Comece a seguir outros usuários!
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

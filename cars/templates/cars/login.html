@@ -1,0 +1,25 @@
+<!-- cars/templates/cars/login.html -->
+
+{% extends 'cars/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title text-center">Entrar</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                </form>
+                <p class="text-center mt-3">
+                    Não tem uma conta? <a href="{% url 'registro' %}">Registre-se</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
