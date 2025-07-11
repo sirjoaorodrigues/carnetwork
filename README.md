@@ -26,4 +26,3 @@ CarSocial é uma plataforma desenvolvida com Django para conectar entusiastas de
 
 ```bash
 git clone https://github.com/seu-usuario/carnetwork.git
-cd carsocial
